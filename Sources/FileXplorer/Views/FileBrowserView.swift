@@ -63,6 +63,18 @@ struct FileBrowserView: View {
             FileBrowserView(rootURL: item.url, rootTitle: item.name, onOpenInNewTab: onOpenInNewTab)
         }
         .navigationTitle(rootTitle)
+        .overlay {
+            if filteredItems.isEmpty {
+                if searchText.isEmpty {
+                    EmptyStateView(systemImage: "folder",
+                                   title: "이 폴더가 비어 있습니다",
+                                   message: "오른쪽 위 폴더+ 버튼으로 새 폴더를 만들거나,\n'폴더 연결' 탭에서 iCloud·다른 앱 폴더를 연결하세요.")
+                } else {
+                    EmptyStateView(systemImage: "magnifyingglass",
+                                   title: "검색 결과가 없습니다")
+                }
+            }
+        }
         .searchable(text: $searchText, prompt: "이 폴더에서 검색")
         .toolbar { toolbarContent }
         .onAppear(perform: reload)
