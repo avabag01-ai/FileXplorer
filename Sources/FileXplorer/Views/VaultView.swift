@@ -16,6 +16,7 @@ struct VaultView: View {
     @State private var photos: [VaultPhoto] = []
 
     @State private var showCamera = false
+    @State private var showImporter = false
     @State private var showNewCategory = false
     @State private var newCategoryName = ""
     @State private var detailPhoto: VaultPhoto?
@@ -98,11 +99,19 @@ struct VaultView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button { showNewCategory = true } label: { Image(systemName: "folder.badge.plus") }
+                Button { showImporter = true } label: { Image(systemName: "photo.badge.plus") }
                 Button { showCamera = true } label: { Image(systemName: "camera") }
             }
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraView(category: shootCategory) { reload() }
+        }
+        .sheet(isPresented: $showImporter) {
+            PhotoPicker { data in
+                _ = try? VaultService.saveJPEG(data, category: shootCategory, date: Date())
+                reload()
+            }
+            .ignoresSafeArea()
         }
         .sheet(item: $detailPhoto) { photo in
             VaultPhotoDetail(photo: photo) { deleted in
