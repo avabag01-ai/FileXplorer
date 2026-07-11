@@ -5,12 +5,9 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            NavigationStack {
-                FileBrowserView(
-                    rootURL: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!,
-                    rootTitle: "내 파일"
-                )
-            }
+            TabbedBrowserView(
+                home: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            )
             .tabItem { Label("로컬", systemImage: "internaldrive") }
 
             NavigationStack {

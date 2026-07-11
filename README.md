@@ -34,7 +34,7 @@ Xcode가 열리면 Signing & Capabilities에서 본인 Apple ID 팀을 선택하
 | 텍스트 편집기 | 지원 |
 | 헥스 뷰어 | 지원 (앞 64KB 미리보기) |
 | FTP 클라이언트 | 평문 FTP 패시브 모드로 지원 (목록/다운로드/업로드/삭제/폴더생성) |
-| 탭 기반 다중 폴더 뷰 | NavigationStack push 방식으로 대체 (동시에 여러 탭 유지는 아래 한계 참고) |
+| 탭 기반 다중 폴더 뷰 | 지원 — 상단 탭 스트립으로 여러 폴더 동시 열기, 폴더 길게 눌러 "새 탭에서 열기" |
 
 ## iOS 정책상 100% 재현이 불가능한 것
 
@@ -50,4 +50,14 @@ Xcode가 열리면 Signing & Capabilities에서 본인 Apple ID 팀을 선택하
 - FTP 클라이언트는 최소 구현이라 대용량 파일 전송 진행률 표시, 재시도 로직은 없음
 - 헥스 뷰어는 성능을 위해 파일 앞부분 64KB만 표시
 - 압축은 zip만 지원 (rar/7z 등은 별도 라이브러리 필요, 라이선스 이슈로 제외)
-- 다중 "탭"은 MiXplorer처럼 여러 폴더를 동시에 열어두는 형태가 아니라 네비게이션 스택으로 구현됨 — 필요하면 `TabView` 기반 브라우저 탭 매니저를 추가로 요청하세요
+
+## 테스트
+
+`Tests/`에 XCTest 17개(FileService/ArchiveService/HexDump/FTPService). 실행:
+```bash
+xcodegen generate
+xcodebuild -project FileXplorer.xcodeproj -scheme FileXplorer \
+  -destination 'platform=iOS Simulator,name=iPhone 16' test
+```
+FTP 테스트는 로컬 FTP 서버가 없으면 자동으로 스킵된다. 서버를 띄우려면
+`pip install pyftpdlib` 후 127.0.0.1:2121에 `tester/testpass` 계정으로 기동하면 된다.

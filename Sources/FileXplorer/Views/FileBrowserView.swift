@@ -6,6 +6,8 @@ import SwiftUI
 struct FileBrowserView: View {
     let rootURL: URL
     let rootTitle: String
+    /// 폴더를 새 탭에서 열기 위한 콜백. 탭 컨테이너 밖(단독 사용)에서는 nil.
+    var onOpenInNewTab: ((URL, String) -> Void)? = nil
 
     @State private var currentURL: URL
     @State private var items: [FileItem] = []
@@ -22,9 +24,10 @@ struct FileBrowserView: View {
     @State private var errorMessage: String?
     @State private var pendingClipboard: (items: [FileItem], isCut: Bool)?
 
-    init(rootURL: URL, rootTitle: String) {
+    init(rootURL: URL, rootTitle: String, onOpenInNewTab: ((URL, String) -> Void)? = nil) {
         self.rootURL = rootURL
         self.rootTitle = rootTitle
+        self.onOpenInNewTab = onOpenInNewTab
         _currentURL = State(initialValue: rootURL)
     }
 
@@ -40,6 +43,15 @@ struct FileBrowserView: View {
                     NavigationLink(value: item) {
                         FileRowView(item: item)
                     }
+                    .contextMenu {
+                        if let onOpenInNewTab {
+                            Button {
+                                onOpenInNewTab(item.url, item.name)
+                            } label: {
+                                Label("새 탭에서 열기", systemImage: "plus.square.on.square")
+                            }
+                        }
+                    }
                 } else {
                     FileRowView(item: item)
                         .onTapGesture { open(item) }
@@ -48,7 +60,7 @@ struct FileBrowserView: View {
         }
         .environment(\.editMode, .constant(isSelecting ? .active : .inactive))
         .navigationDestination(for: FileItem.self) { item in
-            FileBrowserView(rootURL: item.url, rootTitle: item.name)
+            FileBrowserView(rootURL: item.url, rootTitle: item.name, onOpenInNewTab: onOpenInNewTab)
         }
         .navigationTitle(rootTitle)
         .searchable(text: $searchText, prompt: "이 폴더에서 검색")
