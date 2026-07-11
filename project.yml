@@ -1,0 +1,46 @@
+name: FileXplorer
+options:
+  bundleIdPrefix: com.yourname
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  FileXplorer:
+    type: application
+    platform: iOS
+    sources:
+      - Sources/FileXplorer
+    info:
+      path: Sources/FileXplorer/Info.plist
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.filexplorer
+    dependencies:
+      - package: ZIPFoundation
+  FileXplorerTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.filexplorerTests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: FileXplorer
+packages:
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation.git
+    from: 0.9.19
+schemes:
+  FileXplorer:
+    build:
+      targets:
+        FileXplorer: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - FileXplorerTests
